@@ -1,34 +1,25 @@
 const catchError = require('../utils/catchError');
-const User = require('../models/User');
+const Cart = require('../models/Cart');
 
 const getAll = catchError(async(req, res) => {
-    const results = await User.findAll();
+    const results = await Cart.findAll();
     return res.json(results);
 });
 
 const create = catchError(async(req, res) => {
-    const result = await User.create(req.body);
+    const result = await Cart.create(req.body);
     return res.status(201).json(result);
-});
-
-const getOne = catchError(async(req, res) => {
-    const { id } = req.params;
-    const result = await User.findByPk(id);
-    if(!result) return res.sendStatus(404);
-    return res.json(result);
 });
 
 const remove = catchError(async(req, res) => {
     const { id } = req.params;
-    await User.destroy({ where: {id} });
+    await Cart.destroy({ where: {id} });
     return res.sendStatus(204);
 });
 
 const update = catchError(async(req, res) => {
     const { id } = req.params;
-    delete req.body.email;// con esto eliminas el campo de email para q no se pueda actualizar
-    delete req.body.password; // con esto eliminas el campo de contraseña para q no se pueda actualizar
-    const result = await User.update(
+    const result = await Cart.update(
         req.body,
         { where: {id}, returning: true }
     );
@@ -39,7 +30,6 @@ const update = catchError(async(req, res) => {
 module.exports = {
     getAll,
     create,
-    getOne,
     remove,
     update
 }
