@@ -19,3 +19,6 @@ User.hasOne(Purchase);
 
 Purchase.belongsTo(Product);
 Product.hasOne(Purchase);
+
+ProductImg.belongsTo(Product);
+Product.hasMany(ProductImg);

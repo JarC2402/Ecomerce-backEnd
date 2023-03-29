@@ -1,20 +1,27 @@
 const catchError = require('../utils/catchError');
 const ProductImg = require('../models/ProductImg');
+const fs = require('fs');
+const path = require('path');
 
 const getAll = catchError(async(req, res) => {
     const results = await ProductImg.findAll();
     return res.json(results);
 });
-
 const create = catchError(async(req, res) => {
-    const result = await ProductImg.create(req.body);
+    const { productId } = req.body;
+    const url = req.protocol + "://" + req.headers.host + "/uploads/" + req.file.filename;
+		const filename = req.file.filename;
+    const result = await ProductImg.create({ url, filename, productId });
     return res.status(201).json(result);
 });
 
 
 const remove = catchError(async(req, res) => {
     const { id } = req.params;
-    await ProductImg.destroy({ where: {id} });
+    const image = await ProductImg.findByPk(id);
+		if(!image) return res.sendStatus(404);
+    fs.unlinkSync(path.join(__dirname, '..', 'public', 'uploads', image.filename));
+    await image.destroy();
     return res.sendStatus(204);
 });
 
